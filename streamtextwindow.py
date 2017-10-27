@@ -36,23 +36,35 @@ class MainWindow(QMainWindow):
         self.browser = QWebEngineView()
         self.browser.page().setBackgroundColor(Qt.transparent)
 
-        # Url for configuration possibilites https://streamtext.zendesk.com/hc/en-us/articles/210923103-Controlling-the-streaming-text-page-display
-        self.browser.setUrl(QUrl("http://streamtext.net/player?event=IHaveADream&ff=Verdana,sans-serif&fs=30&fgc=ffff00&spacing=2&scroll=0&indicator=0&header=false&controls=false&footer=false&chat=false"))
-
         ''' Grabs the mouse and allows the user to use the events to move the window '''
         self.browser.grabMouse()
 
         self.setCentralWidget(self.browser)
-
         self.oldPos = self.pos()
+        self.initUI()
+
+    def initUI(self):
+        ''' Get value for the sesssion to start'''
+        mytext = self.getText()
+
+        # Url for configuration possibilites https://streamtext.zendesk.com/hc/en-us/articles/210923103-Controlling-the-streaming-text-page-display
+        self.browser.setUrl(QUrl("http://streamtext.net/player?event=" + mytext + "&ff=Verdana,sans-serif&fs=30&fgc=ffff00&spacing=2&scroll=0&indicator=0&header=false&controls=false&footer=false&chat=false"))
         self.show()
 
+    def getText(self):
+        ''' Get the name of the session to load'''
+        text, okPressed = QInputDialog.getText(self, "StreamText Session Name", "Session Name:", QLineEdit.Normal, "")
+        mytext = text
+        return mytext
+        #if okPressed and text != '':
+        #    print(text)
+
     def mousePressEvent(self, event):
-        self.oldPos = event.globalPos()
-        button = Qt.MouseButton
-        #print (button)
+        if Qt.MouseButtons == Qt.RightButton:
+            print ("Right Button Pressed")
 
     def mouseMoveEvent(self, event):
+        ''' Move the window by clicking and dragging'''
         delta = QPoint (event.globalPos() - self.oldPos)
         #print(delta)
         self.move(self.x() + delta.x(), self.y() + delta.y())
